@@ -1,38 +1,66 @@
-import { Component, createSignal, onCleanup } from 'solid-js';
+import { Component, createResource } from 'solid-js';
+import GithubIcon from '../Icon/Github';
+import { createMutable } from 'solid-js/store';
+import Mask from '../Mask';
+import HotList from '../HotList';
+import Input from '../Input/index';
+import getColorMap from '../../utils/getColorMap';
 
-import logo from 'assets/logo.svg';
-import wordmark from 'assets/wordmark.svg';
+export interface IFood {
+  name: string;
+  quality: string;
+  image: string;
+}
+
+export const store = createMutable({
+  show: false,
+  whatLuckyFood: { name: '', quality: '0', image: '' },
+});
 
 const App: Component = () => {
-  const [count, setCount] = createSignal(0),
-    timer = setInterval(() => setCount(count() + 1), 1000);
-  onCleanup(() => clearInterval(timer));
   return (
     <>
-      <header class="bg-[#282c34] min-h-screen flex flex-col justify-center items-center text-center text-[whitesmoke]">
-        <img
-          src={logo}
-          class="h-[40vmin] pointer-events-none mb-4 motion-safe:animate-scale"
-          alt="logo"
-        />
-        <a
-          class="text-[#4483c1] p-4"
-          href="https://github.com/ryansolid/solid#documentation"
-          target="_blank"
-          rel="noopener noreferrer"
+      <Mask
+        show={store.show}
+        close={() => {
+          store.show = false;
+        }}
+      >
+        <div
+          class="flex items-center justify-center bg-white showHello"
+          style="height:400px;width:400px;"
         >
-          <img src={wordmark} class="h-[7vmin] my-4" alt="wordmark" />
-        </a>
-        <p class="my-4">
-          Edit <code class="bg-[#fff3] rounded-md p-2">src/App.tsx</code> and save to reload.
-        </p>
-        <p class="my-4">
-          Page has been open for <code class="bg-[#fff3] rounded-md p-2">{count()}</code> seconds.
-        </p>
-        {/* <a class={styles.link} href="https://solidjs.com" target="_blank" rel="noopener noreferrer">
-          Learn Solid
-        </a> */}
-      </header>
+          <div class="flex flex-col text-black">
+            <div>
+              你抽到了
+              <span style={{ color: getColorMap(store.whatLuckyFood.quality).color }}>
+                {getColorMap(store.whatLuckyFood.quality).quality}
+              </span>
+            </div>
+            <img src={store.whatLuckyFood.image} alt="food图片" style="width:200px;height:200px;" />
+            <div class="flex justify-center items-center">{store.whatLuckyFood.name}</div>
+          </div>
+        </div>
+      </Mask>
+      <div class="flex flex-col justify-center items-center" style={{ padding: '100px' }}>
+        <Input />
+        <div>
+          <HotList />
+        </div>
+        <div class="flex flex-col justify-center items-center">
+          <div class="flex flex-row justify-center items-center">
+            <a href="https://github.com/SoonIter">
+              <GithubIcon />
+            </a>
+          </div>
+          <div class="text-xs" style={{ color: '#92959e' }}>
+            made by <a href="http://www.atcumt.com/">FlyingStudio_SoonIter & ZLj</a>
+          </div>
+          <div class="text-xs" style={{ color: '#92959e' }}>
+            @copyright
+          </div>
+        </div>
+      </div>
     </>
   );
 };
